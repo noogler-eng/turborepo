@@ -1,0 +1,25 @@
+# copying the dockerfile to the root folder
+# as the docker file should run from the root
+# cp ./Docker/Dockerfile.web ./Dockerfile 
+FROM node
+
+WORKDIR /user/src/app
+
+COPY package.json package-lock.json turbo.json tsconfig.json ./
+
+COPY apps ./apps
+
+COPY packages ./packages
+
+RUN npm install
+
+RUN cd packages/db 
+
+RUN npm run db:generate
+
+RUN npm run build
+
+CMD ["npm", "run", "start-web-app"]
+
+# for build
+# docker build -t mywebapp .
