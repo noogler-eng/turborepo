@@ -1,0 +1,55 @@
+# Workflow name
+name: Build and deploy to Docker Hub
+
+# Trigger condition
+# Runs when there's a push
+# Only when push is to these branches
+on:
+  push:
+    branches:
+      - main
+      - master
+
+# Define the job(s)
+# Job ID
+# Job runs on the latest Ubuntu runner
+jobs:
+  build-and-push:
+    runs-on: ubuntu-latest
+
+    # List of steps for the job
+    # Step to checkout the repo
+    # Official GitHub Action to checkout code
+    # Login to Docker Hub
+    # Official Docker login action
+    # Docker Hub username from secrets
+    # Docker Hub password from secrets
+    # Build the Docker image and push it to Docker Hub
+    # Official Docker build and push action
+    # Context (current directory)
+    # Dockerfile location
+    # Important: 'push' must be 'key: value' syntax
+    # Tag for the Docker image
+    # Verify that the image was pushed successfully
+    # Pull the image from Docker Hub to verify
+
+    steps:
+      - name: Check out repo
+        uses: actions/checkout@v2
+
+      - name: Log in to Docker Hub
+        uses: docker/login-action@v1
+        with:
+          username: ${{ secrets.DOCKER_USERNAME }}
+          password: ${{ secrets.DOCKER_PASSWORD }}
+
+      - name: Build and Push Docker image
+        uses: docker/build-push-action@v2
+        with:
+          context: .
+          file: ./docker/Dockerfile.web
+          push: true
+          tags: 10xsharad/mywebapp:latest
+
+      - name: Verify pushed image
+        run: docker pull 10xsharad/mywebapp:latest
